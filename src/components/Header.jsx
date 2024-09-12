@@ -1,5 +1,10 @@
-
-function Header() {
+import { useMemo } from "react"
+function Header({cart, removeFromCart, incrementQuantity, decrementQuantity, clearCart}) {
+    <p className="text-center">El carrito está vacío</p>
+    
+    //State derivado 
+    const isEmpty = useMemo(() => cart.length === 0, [cart])
+    const cartTotal = useMemo(() => cart.reduce((total, item) => total + (item.quantity * item.price), 0 ), [cart])
 
     return(
     <>
@@ -8,65 +13,108 @@ function Header() {
                 <div className="row justify-content-center justify-content-md-between">
                     <div className="col-8 col-md-3">
                         <a href="index.html">
-                            <img className="img-fluid" src="./public/img/logo.svg" alt="imagen logo" />
+                            <img className="img-fluid" src="/img/logo.svg" alt="imagen logo" />
                         </a>
                     </div>
                     <nav className="col-md-6 a mt-5 d-flex align-items-start justify-content-end">
                         <div 
                             className="carrito"
                         >
-                            <img className="img-fluid" src="./public/img/carrito.png" alt="imagen carrito" />
+                            <img className="img-fluid" src="/img/carrito.png" alt="imagen carrito" />
 
                             <div id="carrito" className="bg-white p-3">
-                                <p className="text-center">El carrito esta vacio</p>
-                                <table className="w-100 table">
-                                    <thead>
-                                        <tr>
-                                            <th>Imagen</th>
-                                            <th>Nombre</th>
-                                            <th>Precio</th>
-                                            <th>Cantidad</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <img className="img-fluid" src="./public/img/guitarra_02.jpg" alt="imagen guitarra" />
-                                            </td>
-                                            <td>SRV</td>
-                                            <td className="fw-bold">
-                                                    $299
-                                            </td>
-                                            <td className="flex align-items-start gap-4">
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-dark"
-                                                >
-                                                    -
-                                                </button>
-                                                    1
-                                                <button
-                                                    type="button"
-                                                    className="btn btn-dark"
-                                                >
-                                                    +
-                                                </button>
-                                            </td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-danger"
-                                                    type="button"
-                                                >
-                                                    X
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
 
-                                <p className="text-end">Total pagar: <span className="fw-bold">$899</span></p>
-                                <button className="btn btn-dark w-100 mt-3 p-2">Vaciar Carrito</button>
+                                { isEmpty ?(
+                                    <p className="text-center">El carrito está vacío</p>
+                                ):(
+
+                                <>    
+                                        <table className="w-100 table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Imagen</th>
+                                                    <th>Nombre</th>
+                                                    <th>Precio</th>
+                                                    <th>Cantidad</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {cart.map((producto)=>
+                                                <tr key = {producto.id}>
+                                                    <td>
+                                                        <img className="img-fluid" src={`/img/${producto.image}.jpg`} alt="imagen guitarra" />
+                                                    </td>
+                                                    <td>{producto.name}</td>
+                                                    <td className="fw-bold">
+                                                            ${producto.price}
+                                                    </td>
+                                                    <td className="flex align-items-start gap-4">
+                                                        <>
+                                                            {producto.quantity === 1 ? (
+                                                                <button
+                                                                type="button"
+                                                                className="btn btn-dark" 
+                                                                onClick = { () => decrementQuantity(producto.id)}
+                                                                disabled
+                                                            >
+                                                                -
+                                                            </button>
+                                                            ):(
+                                                                <button
+                                                                type="button"
+                                                                className="btn btn-dark" 
+                                                                onClick = { () => decrementQuantity(producto.id)}
+                                                            >
+                                                                -
+                                                            </button>
+                                                            )}
+                                                        </>
+                                                            
+                                                            {producto.quantity}
+                                                        <>     
+                                                            { producto.quantity === 5 ?(<button
+                                                                type="button"
+                                                                className="btn btn-dark"
+                                                                onClick={() => incrementQuantity(producto.id)}
+                                                                disabled
+                                                            >
+                                                                    +
+                                                            </button>
+                                                            ):(<button
+                                                            type="button"
+                                                            className="btn btn-dark"
+                                                            onClick={() => incrementQuantity(producto.id)}
+                                                            >
+                                                                    +
+                                                            </button>)}
+                                                        </>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            className="btn btn-danger"
+                                                            type="button"
+                                                            onClick =  { () => removeFromCart(producto.id)}
+                                                        >
+                                                            X
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                        
+                                        <p className="text-end">Total pagar: <span className="fw-bold">${cartTotal}</span></p>
+                                        
+                                </>
+                                )}
+                                <button 
+                                    className="btn btn-dark w-100 mt-3 p-2"
+                                    onClick = { () => clearCart()}
+                                
+                                >
+                                    Vaciar Carrito
+                                    </button>
                             </div>
                         </div>
                     </nav>
